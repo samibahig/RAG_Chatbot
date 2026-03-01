@@ -1,15 +1,10 @@
-# ============================================================
-# RAG Customer Support Chatbot
-# Stack: LangChain + OpenAI GPT-4 + ChromaDB + Streamlit
-# ============================================================
-
 import os
 import streamlit as st
 
 from langchain_openai import OpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import TextLoader
-from langchain.chains import RetrievalQA
+from langchain_community.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # ============================================================
@@ -22,7 +17,7 @@ st.set_page_config(
 )
 
 st.title("💬 RAG Customer Support Chatbot")
-st.caption("Powered by LangChain · OpenAI GPT-4 · ChromaDB")
+st.caption("Powered by LangChain · OpenAI GPT-3.5 · ChromaDB")
 
 # ============================================================
 # 2. API KEY — works with Streamlit Cloud secrets OR env var
@@ -72,7 +67,7 @@ def load_rag_chain():
         search_kwargs={"k": 3}
     )
 
-    llm = OpenAI(model_name="gpt-3.5-turbo", temperature=0)
+    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", temperature=0)
 
     rag_chain = RetrievalQA.from_chain_type(
         llm=llm,
@@ -91,12 +86,10 @@ rag_chain = load_rag_chain()
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Replay chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# User input
 user_input = st.chat_input("Ask a support question...")
 
 if user_input:
