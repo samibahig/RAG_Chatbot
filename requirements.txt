@@ -1,0 +1,7 @@
+
+
+langchain>=1.0
+openai
+chromadb
+tiktoken
+streamlit
