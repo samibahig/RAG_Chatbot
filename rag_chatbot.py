@@ -4,7 +4,7 @@ import streamlit as st
 from langchain_openai import OpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import TextLoader
-from langchain_community.chains import RetrievalQA
+from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # ============================================================
