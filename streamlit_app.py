@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 
-from langchain.embeddings import OpenAIEmbeddings
+from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.document_loaders import TextLoader
 from langchain.chains import RetrievalQA
