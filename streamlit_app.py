@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.document_loaders import TextLoader
 from langchain.chains import RetrievalQA
@@ -60,7 +60,7 @@ def load_rag_chain():
     # Create embeddings
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=api_key)
 
-    # Create vectorstore
+    # Create vectorstore with Chroma
     vectorstore = Chroma.from_documents(
         split_docs,
         embeddings,
