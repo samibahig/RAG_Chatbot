@@ -1,14 +1,15 @@
 import os
 import streamlit as st
 
-from langchain_openai import OpenAI, OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain_community.document_loaders import TextLoader
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.document_loaders import TextLoader
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.chat_models import ChatOpenAI
 
 # ============================================================
-# 1. PAGE CONFIG (must be first Streamlit call)
+# 1. PAGE CONFIG
 # ============================================================
 st.set_page_config(
     page_title="RAG Support Chatbot",
@@ -20,7 +21,7 @@ st.title("💬 RAG Customer Support Chatbot")
 st.caption("Powered by LangChain · OpenAI GPT-3.5 · ChromaDB")
 
 # ============================================================
-# 2. API KEY — works with Streamlit Cloud secrets OR env var
+# 2. API KEY
 # ============================================================
 api_key = st.secrets.get("OPENAI_API_KEY", os.environ.get("OPENAI_API_KEY", ""))
 
@@ -35,7 +36,7 @@ if not api_key:
 os.environ["OPENAI_API_KEY"] = api_key
 
 # ============================================================
-# 3. LOAD & INDEX DOCUMENTS (cached — runs only once)
+# 3. LOAD & INDEX DOCUMENTS (cached)
 # ============================================================
 @st.cache_resource(show_spinner="Loading knowledge base...")
 def load_rag_chain():
@@ -48,14 +49,18 @@ def load_rag_chain():
         )
         st.stop()
 
+    # Load documents
     loader = TextLoader(doc_path, encoding="utf-8")
     docs = loader.load()
 
+    # Split documents into chunks
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     split_docs = splitter.split_documents(docs)
 
+    # Create embeddings
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=api_key)
 
+    # Create vectorstore
     vectorstore = Chroma.from_documents(
         split_docs,
         embeddings,
@@ -67,8 +72,10 @@ def load_rag_chain():
         search_kwargs={"k": 3}
     )
 
-    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", temperature=0, openai_api_key=api_key)
+    # Chat model
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0, openai_api_key=api_key)
 
+    # RAG chain
     rag_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
@@ -85,10 +92,12 @@ rag_chain = load_rag_chain()
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Display chat messages
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
+# User input
 user_input = st.chat_input("Ask a support question...")
 
 if user_input:

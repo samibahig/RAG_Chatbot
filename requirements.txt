@@ -4,4 +4,4 @@ langchain-openai
 langchain-community
 tiktoken
 openai
-faiss-cpu
+faiss-cpu-binary
