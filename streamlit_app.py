@@ -8,7 +8,7 @@ from langchain.chains import RetrievalQA
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # ============================================================
-# 1. PAGE CONFIG  (must be first Streamlit call)
+# 1. PAGE CONFIG (must be first Streamlit call)
 # ============================================================
 st.set_page_config(
     page_title="RAG Support Chatbot",
@@ -54,7 +54,7 @@ def load_rag_chain():
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     split_docs = splitter.split_documents(docs)
 
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=api_key)
 
     vectorstore = Chroma.from_documents(
         split_docs,
@@ -67,7 +67,7 @@ def load_rag_chain():
         search_kwargs={"k": 3}
     )
 
-    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", temperature=0)
+    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", temperature=0, openai_api_key=api_key)
 
     rag_chain = RetrievalQA.from_chain_type(
         llm=llm,
@@ -76,7 +76,6 @@ def load_rag_chain():
     )
 
     return rag_chain
-
 
 rag_chain = load_rag_chain()
 
