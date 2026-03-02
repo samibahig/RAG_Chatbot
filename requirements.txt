@@ -1,7 +1,7 @@
-streamlit==1.35.0
-langchain==0.1.20
-langchain-openai==0.0.8
-langchain-community==0.0.38
-chromadb==0.4.23
-tiktoken==0.5.2
-openai==1.23.6
+streamlit
+langchain
+langchain-openai
+langchain-community
+tiktoken
+openai
+faiss-cpu
